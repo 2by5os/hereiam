@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jpa="http://www.springframework.org/schema/data/jpa"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/data/jpa http://www.springframework.org/schema/data/jpa/spring-jpa.xsd">
+
+    <jpa:repositories base-package="domain.repo"/>
+
+    <bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource" destroy-method="close">
+        <property name="driverClass" value="com.mysql.jdbc.Driver"/>
+        <property name="jdbcUrl" value="jdbc:mysql://220.66.115.153/db_heariam?characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull"/>
+        <property name="user" value="ohseok"/>
+        <property name="password" value="1234"/>
+        <property name="acquireRetryAttempts" value="10"/>
+        <property name="preferredTestQuery" value="SELECT 1;"/>
+        <property name="testConnectionOnCheckin" value="true"/>
+        <property name="testConnectionOnCheckout" value="false"/>
+        <property name="maxIdleTime" value="300"/>
+        <property name="idleConnectionTestPeriod" value="30"/>
+    </bean>
+
+    <bean id="jpaVendorAdapter" class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
+        <property name="database" value="MYSQL"/>
+        <property name="showSql" value="true"/>
+    </bean>
+
+    <bean
+            class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
+
+    <bean id="entityManagerFactory"
+          class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="jpaVendorAdapter" ref="jpaVendorAdapter"/>
+        <property name="packagesToScan">
+            <list>
+                <value>domain</value>
+            </list>
+        </property>
+        <property name="jpaProperties">
+            <props>
+                <prop key="hibernate.format_sql">true</prop>
+                <prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+                <prop key="hibernate.show_sql">false</prop>
+                <prop key="hibernate.hbm2ddl.auto">
+                    update</prop>
+                <prop key="jdbc.fetch_size">50</prop>
+                <prop key="jdbc.batch_size">25</prop>
+                <!--<prop key="hibernate.cache.use_query_cache">true</prop>-->
+                <prop key="hibernate.cache.provider_class">
+                    org.hibernate.cache.EhCacheProvider</prop>
+                <prop key="hibernate.query.substitutions">
+                    true 1,false 0</prop>
+                <prop key="hibernate.c3p0.initialPoolSize">10</prop>
+                <prop key="hibernate.c3p0.minPoolSize">10</prop>
+                <prop key="hibernate.c3p0.maxPoolSize">50</prop>
+                <prop key="hibernate.c3p0.acquireIncrement">2</prop>
+                <prop key="hibernate.c3p0.timeout">10</prop>
+                <prop key="hibernate.c3p0.max_statement">50</prop>
+            </props>
+        </property>
+    </bean>
+
+    <bean id="transactionManager"
+          class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="entityManagerFactory"/>
+    </bean>
+
+</beans>
